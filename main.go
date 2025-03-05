@@ -25,7 +25,17 @@ func getHello(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	var portFlag = flag.String("port", "8080", "write port for the server")
+	var dirFlag = flag.String("dir", "data", "directory for data storing")
 	flag.Parse()
+
+	if _, err := os.Stat(*dirFlag); os.IsNotExist(err) {
+		fmt.Println("Given directory does not exist, creating directory...")
+		err := os.MkdirAll(*dirFlag, os.ModePerm)
+		if err != nil {
+			fmt.Printf("Failed to create directory: %v\n", err)
+			os.Exit(1)
+		}
+	}
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", getRoot)
